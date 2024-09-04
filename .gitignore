@@ -31,3 +31,4 @@ test*
 /.htaccess
 /*.xml
 robots.txt
+local/php_interface/vendor/*
