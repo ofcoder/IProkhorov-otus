@@ -1,3 +1,14 @@
 <?php
+require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 $dateTimeNow = date_create();
-echo date_format($dateTimeNow, 'Y-m-d H:i:s');
+$dateString = date_format($dateTimeNow, 'Y-m-d H:i:s');
+$dirLog = $_SERVER["DOCUMENT_ROOT"] . "/local/logs";
+$fileLog = "timeLog.txt";
+if (!is_dir($dirLog)) {
+  mkdir($dirLog, 0777, true);
+}
+file_put_contents($dirLog . "/" . $fileLog, $dateString . PHP_EOL, FILE_APPEND);
+
+\Ofcoder\Diagnostic\Helper::myDump($dateString);
+//\Ofcoder\Diagnostic\Helper::log2file($dateString);
+
