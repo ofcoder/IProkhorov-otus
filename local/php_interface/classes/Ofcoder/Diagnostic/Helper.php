@@ -50,4 +50,21 @@ class Helper
     }
 
   }
+  public static function bitrixDumpToFile($var, $varName = '')
+  {
+    /**
+     * @param mixed $variable Логируемая переменная
+     * @param string $varName Название переменной в лог-файле
+     * @param string $fileName Имя файла для сохранения лога
+     */
+    $variable = $var;
+    $fileName = DEBUG_FILE_NAME;
+    $varName = $varName;
+    try {
+      \Bitrix\Main\Diag\Debug::dumpToFile($variable, $varName, $fileName);
+    }catch (\Exception $e ){
+      \Bitrix\Main\Diag\Debug::dumpToFile($e, 'Ошибка bitrixDumpToFile', $fileName);
+    }
+
+  }
 }
