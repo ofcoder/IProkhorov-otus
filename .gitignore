@@ -33,3 +33,4 @@ test*
 robots.txt
 local/php_interface/vendor/*
 local/logs/*
+composer.phar
