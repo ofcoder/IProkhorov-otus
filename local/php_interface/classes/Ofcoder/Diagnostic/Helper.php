@@ -3,7 +3,7 @@ namespace Ofcoder\Diagnostic;
 
 class Helper
 {
-    const FILE_NAME = DEBUG_FILE_NAME;
+    //const FILE_NAME = DEBUG_FILE_NAME;
   public static function writeToLog($data, $title = ''): bool
   {
     if (!DEBUG_FILE_NAME)
@@ -27,8 +27,8 @@ class Helper
     $fn = $fn ? "-" . str_replace(['\\', '/', ' '], '', $fn) : "";
     $fp = fopen($folder . date("Y") . "-log2file{$fn}.txt", "a");
     $typeVar = gettype($var);
-    if($typeVar == "string" || $typeVar == "integer" || $typeVar == "double" || $typeVar == "boolean"){
-      $test = fwrite($fp, date("Y-m-d H:i:s") . ":" . $var. "\r\n");
+    if($typeVar == "string" || $typeVar == "integer" || $typeVar == "double" || $typeVar !== "boolean"){
+      $test = fwrite($fp, date("Y-m-d H:i:s") . ":" . print $var. "\r\n");
     }else{
       $test = fwrite($fp, date("Y-m-d H:i:s") . ";" . var_dump($var) . "\r\n");
     }
