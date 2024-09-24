@@ -32,5 +32,5 @@ foreach( [
 }
 unset($filePath);
 
-\Ofcoder\Diagnostic\Helper::log2file('TEST');
+
 ?>
