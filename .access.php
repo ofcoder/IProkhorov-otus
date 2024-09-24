@@ -1,8 +1,14 @@
 <?
-$PERM["online"]["*"]="R";
-$PERM["desktop_app"]["*"]="R";
+$PERM["extranet"]["12"]="T_8";
+$PERM["extranet"]["19"]="T_10";
+$PERM["extranet"]["18"]="T_8";
+$PERM["extranet"]["17"]="T_8";
+$PERM["extranet"]["*"]="D";
+$PERM["upload"]["17"]="T_8";
 $PERM["upload"]["*"]="R";
 $PERM["upload"]["5"]="T_8";
+$PERM["online"]["*"]="R";
+$PERM["desktop_app"]["*"]="R";
 $PERM["/"]["13"]="T_10";
 $PERM["/"]["12"]="R";
 $PERM["/"]["*"]="D";
