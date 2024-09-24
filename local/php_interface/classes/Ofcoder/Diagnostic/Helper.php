@@ -3,6 +3,7 @@ namespace Ofcoder\Diagnostic;
 
 class Helper
 {
+    const FILE_NAME = DEBUG_FILE_NAME;
   public static function writeToLog($data, $title = ''): bool
   {
     if (!DEBUG_FILE_NAME)
