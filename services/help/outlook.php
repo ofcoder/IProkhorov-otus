@@ -7,7 +7,7 @@ require($_SERVER['DOCUMENT_ROOT'].'/bitrix/header.php');
 IncludeModuleLangFile($_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/intranet/public/services/help/outlook.php');
 $APPLICATION->SetTitle(GetMessage('SERVICES_TITLE'));
 
-?><script src='/bitrix/templates/learning/js/imgshw.js'></script>
+?><script type='text/javascript' src='/bitrix/templates/learning/js/imgshw.js'></script>
 <?=GetMessage('SERVICES_INFO1', ['#SITE#' => SITE_DIR]);
 
 if (CModule::IncludeModule('intranet') && CModule::IncludeModule('iblock'))

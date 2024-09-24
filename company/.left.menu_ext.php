@@ -1,23 +1,20 @@
 <?php
-
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 {
 	die();
 }
 
-use Bitrix\Intranet\Settings\Tools\ToolsManager;
 use Bitrix\Intranet\Site\Sections\TimemanSection;
 use Bitrix\Landing\Rights;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 
 Loc::loadMessages($_SERVER['DOCUMENT_ROOT'] . '/bitrix/modules/intranet/public/company/.left.menu.php');
-$GLOBALS['APPLICATION']->setPageProperty('topMenuSectionDir', '/company/');
-$menuItems = [];
 
-if (ToolsManager::getInstance()->checkAvailabilityByMenuId('menu_company'))
-{
-	$menuItems[] = [
+$GLOBALS['APPLICATION']->setPageProperty('topMenuSectionDir', '/company/');
+
+$menuItems = [
+	[
 		Loc::getMessage('COMPANY_MENU_STRUCTURE'),
 		SITE_DIR . 'company/vis_structure.php',
 		[],
@@ -25,12 +22,8 @@ if (ToolsManager::getInstance()->checkAvailabilityByMenuId('menu_company'))
 			'menu_item_id' => 'menu_company',
 		],
 		'',
-	];
-}
-
-if (ToolsManager::getInstance()->checkAvailabilityByMenuId('menu_employee'))
-{
-	$menuItems[] = [
+	],
+	[
 		Loc::getMessage('COMPANY_MENU_EMPLOYEE_LIST'),
 		SITE_DIR . 'company/',
 		[],
@@ -38,8 +31,8 @@ if (ToolsManager::getInstance()->checkAvailabilityByMenuId('menu_employee'))
 			'menu_item_id' => 'menu_employee',
 		],
 		'',
-	];
-}
+	],
+];
 
 if (Loader::includeModule('intranet') && TimemanSection::isAvailable())
 {
@@ -47,12 +40,7 @@ if (Loader::includeModule('intranet') && TimemanSection::isAvailable())
 }
 
 $landingIncluded = Loader::includeModule('landing');
-
-if (
-	$landingIncluded
-	&& Rights::hasAdditionalRight(Rights::ADDITIONAL_RIGHTS['menu24'], 'knowledge')
-	&& ToolsManager::getInstance()->checkAvailabilityByMenuId('menu_knowledge')
-)
+if ($landingIncluded && Rights::hasAdditionalRight(Rights::ADDITIONAL_RIGHTS['menu24'], 'knowledge'))
 {
 	$menuItems[] = [
 		Loc::getMessage('COMPANY_MENU_KNOWLEDGE_BASE'),
@@ -66,10 +54,7 @@ if (
 	];
 }
 
-if (
-	\Bitrix\Main\ModuleManager::isModuleInstalled('im')
-	&& ToolsManager::getInstance()->checkAvailabilityByMenuId('menu_conference')
-)
+if (\Bitrix\Main\ModuleManager::isModuleInstalled('im'))
 {
 	$menuItems[] = [
 		Loc::getMessage('COMPANY_MENU_CONFERENCES'),

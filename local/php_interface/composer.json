@@ -1,0 +1,26 @@
+{
+    "name": "ofcoder/b24.otus",
+    "description": "test",
+    "minimum-stability": "stable",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "ofcoder",
+            "email": "ofcoder@yandex.ru"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^7.9",
+        "wikimedia/composer-merge-plugin": "dev-master"
+    },
+    "config": {
+        "vendor-dir": "vendor"
+    },
+    "extra": {
+        "merge-plugin": {
+            "require": [
+                "/home/bitrix/ext_www/b24.otus/bitrix/composer-bx.json"
+            ]
+        }
+    }
+}

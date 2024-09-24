@@ -20,7 +20,7 @@ restore.php
 *.csv
 *.zip
 *.tar
-*.tar.gz
+*.tar.gz*
 *.DS_Store
 /**/*.DS_Store
 Thumbs.db
@@ -31,10 +31,10 @@ test*
 /.htaccess
 /*.xml
 robots.txt
-/local/php_interface/vendor/*
-/local/logs/*
+local/php_interface/vendor/*
+local/logs/*
 composer.phar
-/.git_core/*
 delete_site.php
 .htsecure
-/local_kb/*
+/.git_core/*
+local_kb/

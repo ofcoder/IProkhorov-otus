@@ -6,7 +6,6 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true)
 
 use Bitrix\Intranet\Site\Sections\AutomationSection;
 use Bitrix\Main\Loader;
-use Bitrix\Intranet\Settings\Tools\ToolsManager;
 
 $GLOBALS['APPLICATION']->setPageProperty('topMenuSectionDir', SITE_DIR . 'automation/');
 
@@ -19,7 +18,7 @@ $menuItems = [];
 $items = AutomationSection::getItems();
 foreach ($items as $item)
 {
-	if ($item['available'] && ToolsManager::getInstance()->checkAvailabilityByToolId($item['id']))
+	if ($item['available'])
 	{
 		$menuData = $item['menuData'] ?? [];
 		unset($menuData['counter_id']);

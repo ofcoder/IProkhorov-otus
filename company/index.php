@@ -16,8 +16,7 @@ $APPLICATION->IncludeComponent(
 			'PATH_TO_DEPARTMENT' => SITE_DIR.'company/structure.php?set_filter_structure=Y&structure_UF_DEPARTMENT=#ID#',
 			'LIST_URL' => SITE_DIR.'company/',
 		],
-		'USE_UI_TOOLBAR' => 'Y',
-		'POPUP_COMPONENT_USE_BITRIX24_THEME' => 'Y',
+		'USE_UI_TOOLBAR' => 'Y'
 	)
 );
 ?><?php

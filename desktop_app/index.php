@@ -8,12 +8,10 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
 if (!CModule::IncludeModule('im'))
 	return;
 
-$isDesktop = isset($_GET['BXD_API_VERSION']) || mb_strpos($_SERVER['HTTP_USER_AGENT'], 'BitrixDesktop') !== false;
-
 if (intval($USER->GetID()) <= 0 || \Bitrix\Im\User::getInstance()->isConnector())
 {
 	?>
-<script>
+<script type="text/javascript">
 	if (typeof(BXDesktopSystem) != 'undefined')
 		BXDesktopSystem.Login({});
 	else
@@ -33,31 +31,25 @@ if (
 
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/im/install/public/desktop_app/index.php");
 
-if (IsModuleInstalled('ui'))
-{
-	$APPLICATION->IncludeComponent("bitrix:ui.info.helper", "", array());
-}
-
-if (isset($_GET['IFRAME']) && $_GET['IFRAME'] == 'Y')
+if (isset($_GET['IFRAME']) == 'Y')
 {
 	$APPLICATION->IncludeComponent("bitrix:im.messenger", "iframe", Array(
 		"CONTEXT" => "FULLSCREEN",
-		"DESKTOP" => $isDesktop,
+		"DESKTOP" => true,
 	), false, Array("HIDE_ICONS" => "Y"));
 }
-else if (!$isDesktop && \Bitrix\Im\Settings::isLegacyChatActivated())
+else if (!isset($_GET['BXD_API_VERSION']) && mb_strpos($_SERVER['HTTP_USER_AGENT'], 'BitrixDesktop') === false)
 {
 	$APPLICATION->IncludeComponent("bitrix:im.messenger", "fullscreen", Array(
 		"CONTEXT" => "FULLSCREEN",
 		"DESIGN" => "DESKTOP",
-		"DESKTOP" => false,
+		"DESKTOP" => true,
 	), false, Array("HIDE_ICONS" => "Y"));
 }
 else
 {
-	define("BX_DESKTOP", true);
 	?>
-	<script>
+	<script type="text/javascript">
 		if (typeof(BXDesktopSystem) != 'undefined')
 			BX.desktop.init();
 		<?if (!isset($_GET['BXD_MODE'])):?>
@@ -70,6 +62,11 @@ else
 		"CONTEXT" => "DESKTOP",
 		"DESKTOP" => true,
 	), false, Array("HIDE_ICONS" => "Y"));
+
+	if (IsModuleInstalled('ui'))
+	{
+		$APPLICATION->IncludeComponent("bitrix:ui.info.helper", "", array());
+	}
 
 	$diskEnabled = false;
 	if(IsModuleInstalled('disk'))
@@ -100,7 +97,7 @@ else
 		{
 			\Bitrix\Main\UI\Extension::load('timeman.monitor');
 
-			?><script>
+			?><script type="text/javascript">
 			BX.Timeman.Monitor.init(<?=\Bitrix\Timeman\Monitor\Config::json()?>);
 			</script><?
 		}

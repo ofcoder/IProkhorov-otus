@@ -6,13 +6,20 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
 
 \Bitrix\Main\Page\Asset::getInstance()->setJsToBody(false);
 
+if (!\Bitrix\Main\Application::getInstance()->isUtfMode())
+{
+	$GLOBALS["APPLICATION"]->RestartBuffer();
+	CHTTP::SetStatus("404 Not Found");
+	return;
+}
+
 if (!CModule::IncludeModule('im'))
 	return;
 
 if (intval($USER->GetID()) <= 0 || \Bitrix\Im\User::getInstance()->isConnector())
 {
 	?>
-<script>
+<script type="text/javascript">
 	if (typeof(BXDesktopSystem) != 'undefined')
 		BXDesktopSystem.Login({});
 	else
@@ -26,7 +33,6 @@ IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/im/install/publ
 $GLOBALS["APPLICATION"]->SetPageProperty("BodyClass", "im-desktop");
 
 \Bitrix\Main\UI\Extension::load([
-	'im.v2.const',
 	'im_desktop',
 	'ui.buttons',
 	'ui.buttons.icons'
