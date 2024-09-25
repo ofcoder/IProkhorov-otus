@@ -16,30 +16,7 @@ class Helper
     file_put_contents(DEBUG_FILE_NAME, $log, FILE_APPEND);
     return true;
   }
-  public static function log2file($var, $fn = null, $folder="/local/logs/")
-  {
-    $folder = $_SERVER["DOCUMENT_ROOT"] . $folder;
-    if(!file_exists($folder))
-    {
-      mkdir($folder, 0777, true);
-    }
-    $error = "";
-    $fn = $fn ? "-" . str_replace(['\\', '/', ' '], '', $fn) : "";
-    $fp = fopen($folder . date("Y") . "-log2file{$fn}.txt", "a");
-    $typeVar = gettype($var);
-    if($typeVar == "string" || $typeVar == "integer" || $typeVar == "double" || $typeVar !== "boolean"){
-      $test = fwrite($fp, date("Y-m-d H:i:s") . ":" . print $var. "\r\n");
-    }else{
-      $test = fwrite($fp, date("Y-m-d H:i:s") . ";" . var_dump($var) . "\r\n");
-    }
-    if (!$test) {
-      $error = "Ошибка при записи в файл " . $folder . date("Y") . "-log2file{$fn}.txt";
 
-    }
-    fclose($fp);
-
-    return $error;
-  }
   public static function myDump($var)
   {
     global $USER;
