@@ -45,4 +45,32 @@ class Helper
     }
 
   }
+  public static function log2file($var, $fn = null, $folder=null)
+  {
+
+
+    if(!$folder)
+        $folder = $_SERVER["DOCUMENT_ROOT"] .'/local/logs/';
+    if(!file_exists($folder))
+    {
+      mkdir($folder, 0777, true);
+    }
+    $error = "";
+    $fn = $fn ? "-" . str_replace(['\\', '/', ' '], '', $fn) : "";
+    $filePath = $folder . date("Y") . "-log2file{$fn}.txt";
+    $log = date("Y-m-d H:i:s") . "; ";
+
+    if( is_null($var) || is_array($var) || is_object($var)){
+      $log .= var_dump($var) . "\r\n";
+    }else{
+        $log .= $var . "\r\n";
+    }
+    $test = file_put_contents( $filePath, $log, FILE_APPEND);
+
+    if (!$test) {
+      $error = "Ошибка при записи в файл " . $folder . date("Y") . "-log2file{$fn}.log";
+
+    }
+    return $error;
+  }
 }

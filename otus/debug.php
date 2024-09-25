@@ -11,7 +11,7 @@ if (!is_dir($dirLog)) {
 file_put_contents($dirLog . "/" . $fileLog, $dateString . PHP_EOL, FILE_APPEND);
 
 \Ofcoder\Diagnostic\Helper::myDump($dateString);
-//\Ofcoder\Diagnostic\Helper::log2file($dateString);
+\Ofcoder\Diagnostic\Helper::log2file($dateString);
 \Ofcoder\Diagnostic\Helper::writeToLog($dateString, 'Date: ');
 \Ofcoder\Diagnostic\Helper::bitrixDumpToFile($dateString, 'Date: ');
 
