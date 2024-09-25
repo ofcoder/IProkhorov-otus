@@ -34,3 +34,7 @@ robots.txt
 local/php_interface/vendor/*
 local/logs/*
 composer.phar
+delete_site.php
+.htsecure
+/.git_core/*
+local_kb/

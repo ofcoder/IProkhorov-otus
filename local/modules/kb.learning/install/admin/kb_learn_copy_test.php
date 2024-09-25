@@ -1,0 +1,1 @@
+<?require($_SERVER["DOCUMENT_ROOT"]."/local/modules/kb.learning/admin/kb_learn_copy_test.php");?>
