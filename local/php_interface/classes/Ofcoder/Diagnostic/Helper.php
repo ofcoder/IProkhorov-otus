@@ -47,8 +47,6 @@ class Helper
   }
   public static function log2file($var, $fn = null, $folder=null)
   {
-
-
     if(!$folder)
         $folder = $_SERVER["DOCUMENT_ROOT"] .'/local/logs/';
     if(!file_exists($folder))
@@ -60,10 +58,10 @@ class Helper
     $filePath = $folder . date("Y") . "-log2file{$fn}.txt";
     $log = date("Y-m-d H:i:s") . "; ";
 
-    if( is_null($var) || is_array($var) || is_object($var)){
-      $log .= var_dump($var) . "\r\n";
+    if( is_scalar($var)){
+      $log .= $var . "\r\n";
     }else{
-        $log .= $var . "\r\n";
+        $log .= print_r($var, true) . "\r\n";
     }
     $test = file_put_contents( $filePath, $log, FILE_APPEND);
 
