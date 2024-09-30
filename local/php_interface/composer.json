@@ -1,5 +1,5 @@
 {
-    "name": "ofcoder/b24.otus",
+    "name": "ofcoder/codercity.ru",
     "description": "test",
     "minimum-stability": "stable",
     "license": "proprietary",
@@ -11,15 +11,19 @@
     ],
     "require": {
         "guzzlehttp/guzzle": "^7.9",
-        "wikimedia/composer-merge-plugin": "dev-master"
+        "wikimedia/composer-merge-plugin": "dev-master",
+        "monolog/monolog": "^3.7"
     },
     "config": {
-        "vendor-dir": "vendor"
+        "vendor-dir": "vendor",
+        "allow-plugins": {
+            "wikimedia/composer-merge-plugin": true
+        }
     },
     "extra": {
         "merge-plugin": {
             "require": [
-                "/home/bitrix/ext_www/b24.otus/bitrix/composer-bx.json"
+                "/home/bitrix/www/codercity.ru/bitrix/composer-bx.json"
             ]
         }
     }
