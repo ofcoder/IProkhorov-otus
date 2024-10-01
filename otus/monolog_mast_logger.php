@@ -1,5 +1,5 @@
 <?php
-
+//источник https://betterstack.com/community/guides/logging/how-to-start-logging-with-monolog/#creating-custom-handlers-in-monolog
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 
 
