@@ -4,7 +4,7 @@ namespace Ofcoder\Diagnostic;
 use Bitrix\Main\Diag\FileExceptionHandlerLog;
 use Bitrix\Main\Diag\ExceptionHandlerFormatter;
 
-class OfcoderFileExceptionHandlerLog extends FileExceptionHandlerLog
+class OfcoderBDExceptionHandlerLog extends FileExceptionHandlerLog
 {
   public function write($exception, $logType)
   {
