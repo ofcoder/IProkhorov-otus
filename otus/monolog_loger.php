@@ -11,7 +11,8 @@ use Monolog\Formatter\JsonFormatter;
 function exception_handler(Throwable $e)
 {
   $logger = new Logger('uncaught');
-  $stream_handler = new StreamHandler(__DIR__ . "/log/uncaught.log", Level::Debug);
+  //$stream_handler = new StreamHandler(__DIR__ . "/log/uncaught.log", Level::Debug);
+  $stream_handler = new StreamHandler(DEBUG_FILE_NAME, Level::Debug);
   $stream_handler->setFormatter(new JsonFormatter());
   $logger->pushHandler($stream_handler);
   $logger->error("Uncaught exception", array('exception' => $e));

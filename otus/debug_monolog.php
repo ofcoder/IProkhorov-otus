@@ -61,7 +61,7 @@ $logger->pushHandler($stream_handler);
 $logger->debug("This file has been executed");
 
 //Свой класс
-$db_handler = new MonologDBHandler(new PDO('sqlite:debug.sqlite'));
+$db_handler = new \Ofcoder\Diag\MonologDBHandler(new PDO('sqlite:debug.sqlite'));
 $logger->pushHandler($db_handler);
 $logger->debug("This file has been executed.");
 

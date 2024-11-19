@@ -1,1 +1,0 @@
-<? require($_SERVER["DOCUMENT_ROOT"] . "/local/modules/kb.learning/admin/kb_learn_vote_result.php");?>

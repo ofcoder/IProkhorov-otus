@@ -16,7 +16,7 @@ $formatter = new JsonFormatter();
 // Create new handler
 $rotating_handler = new RotatingFileHandler(__DIR__ . "/log/debug.log", 30, Level::Debug);
 $stream_handler = new StreamHandler(__DIR__ . "/log/notice.log", Level::Notice);
-$db_handler = new MonologDBHandler(new PDO('sqlite:alert.sqlite'), Level::Alert);
+$db_handler = new \Ofcoder\Diag\MonologDBHandler(new PDO('sqlite:alert.sqlite'), Level::Alert);
 
 $stream_handler->setFormatter($formatter);
 $db_handler->setFormatter($formatter);
