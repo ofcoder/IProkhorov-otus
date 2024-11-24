@@ -44,6 +44,7 @@ $arDeals = \Bitrix\Crm\DealTable::getList([
   'limit' => 10,
 ]
 );
+Application::getConnection()->stopTracker();
 Debug::dump($arDeals->getTrackerQuery()->getSql());
 
 /************************** hbL ************************************/
