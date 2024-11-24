@@ -20,7 +20,7 @@ class Helper
   public static function myDump($var)
   {
     global $USER;
-    if( ($USER->isAdmin() == 1) || ($REQUEST["dump"] === "Y"))
+    if( ($USER->isAdmin() == 1) || ($_REQUEST["dump"] === "Y"))
     {
       ?>
       <font style="text-align: left; font-size: 10px"><pre><?var_dump($var)?></pre></font><br>

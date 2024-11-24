@@ -32,6 +32,9 @@ test*
 /*.xml
 robots.txt
 local/php_interface/vendor/*
+local/php_interface/.settings.php
+local/php_interface/.settings_extra.php
+local/php_interface/dbconn.php
 local/logs/*
 composer.phar
 delete_site.php

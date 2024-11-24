@@ -3,7 +3,7 @@ require_once($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_be
 $dateTimeNow = date_create();
 $dateString = date_format($dateTimeNow, 'Y-m-d H:i:s');
 $date = date('Y-m-d H:i:s');
-$dirLog = DEBUG_FILE_NAME;
+$dirLog = $_SERVER["DOCUMENT_ROOT"] . '/local/Logs/';
 $fileLog = "timeLog.txt";
 if (!is_dir($dirLog)) {
   mkdir($dirLog, 0777, true);

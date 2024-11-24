@@ -23,7 +23,7 @@
     "extra": {
         "merge-plugin": {
             "require": [
-                "/home/bitrix/www/codercity.ru/bitrix/composer-bx.json"
+                "/home/c/ct93339/public_html/bitrix/composer-bx.json"
             ]
         }
     }
