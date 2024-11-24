@@ -71,4 +71,17 @@ class Helper
     }
     return $error;
   }
+  /*вывод данных
+   * @params
+   * $var
+   * $type boolean var_dump(true)/print_r(false) default false
+   */
+  public static function pr($var, $type = false) {
+    echo '<pre style="font-size:10px; border:1px solid #000; background:#FFF; text-align:left; color:#000;">';
+    if ($type)
+      var_dump($var);
+    else
+      print_r($var);
+    echo '</pre>';
+  }
 }
