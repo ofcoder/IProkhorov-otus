@@ -5,19 +5,21 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 $APPLICATION->SetTitle('Вывод связанных полей');
 
 use Models\Lists\CarsPropertyValuesTable as CarsTable;
+use Ofcoder\Diag\Helper;
 
 // вывод данных по списку записей из инфоблока Автомобили
 $cars = CarsTable::getList([
   'select' => [
     'ID' => 'IBLOCK_ELEMENT_ID',
     'NAME' => 'ELEMENT.NAME',
-    'MANUFACTURER_ID' => 'MANUFACTURER_ID'
+    'MANUFACTURER_ID' => 'MANUFACTURER_ID',
+    'CITY_ID' => 'CITY_ID',
   ]
 ])->fetchAll();
 
-pr($cars);
+Helper::pr($cars);
 
-/*$cars = CarsTable::query()
+$cars = CarsTable::query()
     ->setSelect([
         'NAME' => 'ELEMENT.NAME',
         'MANUFACTURER_NAME' => 'MANUFACTURER.ELEMENT.NAME',
@@ -32,12 +34,12 @@ pr($cars);
     )
     ->fetchAll();
 
-pr($cars);
-*/
+Helper::pr($cars);
+
 
 
 // добавление данных  записей в инфоблок Автомобили
-/*$dbResult = CarsTable::add([
+$dbResult = CarsTable::add([
         'NAME'=>'BMW X5',
         'MANUFACTURER_ID'=>30,
         'CITY_ID'=>34,
@@ -45,4 +47,4 @@ pr($cars);
         'ENGINE_VOLUME'=>'4',
         'PRODUCTION_DATE'=>date('d.m.Y H:i:s'),
 ]);
-pr($dbResult);*/
+Helper::pr($dbResult);
