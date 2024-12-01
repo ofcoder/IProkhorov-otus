@@ -66,7 +66,7 @@ class Helper
     $test = file_put_contents( $filePath, $log, FILE_APPEND);
 
     if (!$test) {
-      $error = "Ошибка при записи в файл " . $folder . date("Y") . "-log2file{$fn}.log";
+      $error = "Ошибка при записи в файл " . $folder . date("Y") . "-log2file-{$fn}.log";
 
     }
     return $error;

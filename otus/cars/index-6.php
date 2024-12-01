@@ -1,21 +1,23 @@
 <?php
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
+use Ofcoder\Diag\Helper;
 
 $APPLICATION->SetTitle('Вывод связанных полей');
 
 use Bitrix\Main\Loader;
 use Bitrix\Iblock\Iblock;
-use Ofcoder\Diag\Helper;
 Loader::includeModule('iblock');
 
 $iblockId = 16;
 $iblockElementId = 36;
 
-// Old API 
+// Old API
 /**/
+//Получить список элементов
+//https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/getlist.php
 
 $arFilter = ['IBLOCK_ID' => $iblockId, 'ACTIVE' => 'Y'];
-$arSelect = ['ID', 'NAME', 'CODE', 'PROPERTY_MODEL', 'PROPERTY_MANUFACTURER','PROPERTY_CITY', 'PROPERTY_CODE'];
+$arSelect = ['ID', 'NAME', 'CODE', 'PROPERTY_MODEL'];
 $res = CIBlockElement::GetList([], $arFilter, false, [], $arSelect);
 while($arFields = $res->fetch()){
   Helper::pr($arFields);
@@ -30,7 +32,9 @@ while ($arSect = $rsSect->fetch())
   Helper::pr($arSect);
 }
 
-
+/*
+//Добавление элементов
+//https://dev.1c-bitrix.ru/api_help/iblock/classes/ciblockelement/add.php
 $arElementProps = [
     'MODEL' => 'X5',
 ];
@@ -42,20 +46,24 @@ $arIblockFields = [
 ];
 $objIblockElement = new \CIBlockElement();
 $objIblockElement->Add($arIblockFields);
+
 /**/
+
 
 
 // ORM
 
 //get by id
 /**/
+//Надо сделать символьный код инфоблока
+//Надо свойства хранить в отдельной таблице
 $iblock = Iblock::wakeUp($iblockId);
 $element = $iblock->getEntityDataClass()::getByPrimary($iblockElementId)->fetchObject();
 
 // get props
 $element = $iblock->getEntityDataClass()::getByPrimary(
-	$iblockElementId, 
-	['select' => ['NAME', 'MODEL', 'CODE', 'MANUFACTURER_ID', 'CITY_ID']])
+	$iblockElementId,
+	['select' => ['NAME', 'MODEL', 'MANUFACTURER_ID']])
 ->fetchObject();
 
 $name = $element->get('NAME');
@@ -63,18 +71,30 @@ echo 'NAME: ';
 Helper::pr($name);
 
 $model = $element->get('MODEL')->getValue();
-$city = $element->get('CITY_ID')->getValue();
 echo 'MODEL: ';
 Helper::pr($model);
-echo 'CITY_ID: ';
-Helper::pr($city);
+
+/*
+// Свойство типа файл
+'MORE_PHOTO.FILE',
+// Свойство типа список
+'NEWPRODUCT.ITEM',
+// Свойство типа привязка к элементу инфоблока
+'RECOMMEND.ELEMENT',
+// Свойство типа привязка к разделу инфоблока
+'NEWS_SECTION.SECTION'
+*/
+//https://hmarketing.ru/blog/bitrix/rabota-s-elementami-infoblokov-cherez-orm/
+$manufact = $element->get('MANUFACTURER_ID')->getValue();
+echo 'MANUFACTURER_ID: ';
+Helper::pr($manufact,true);
 /**/
 
 
 // get list
 /**/
-$elements = \Bitrix\Iblock\Elements\ElementCarsTable::getList([ // car - cимвольный код API инфоблока
-    'select' => ['MODEL'], // имя свойства 
+ $elements = \Bitrix\Iblock\Elements\ElementCarsTable::getList([ // cars - cимвольный код API инфоблока
+    'select' => ['MODEL'], // имя свойства
 ])->fetchCollection();
 
 foreach ($elements as $element) {
@@ -82,9 +102,9 @@ foreach ($elements as $element) {
 }
 
 // получение через query списка элементов
-$elements = \Bitrix\Iblock\Elements\ElementCarsTable::query() // car - cимвольный код API инфоблока
+$elements = \Bitrix\Iblock\Elements\ElementCarsTable::query() // cars - cимвольный код API инфоблока
     ->addSelect('NAME')
-    ->addSelect('MODEL') // имя свойства 
+    ->addSelect('MODEL') // имя свойства
     ->addSelect('ID')
     ->fetchCollection();
 
@@ -99,34 +119,3 @@ foreach ($elements as $key => $item) {
 /**/
 
 
-// Получить свойства инфоблока
-/**/
-$dbIblockProps = \Bitrix\Iblock\PropertyTable::getList(array(
-    'select' => array('*'),
-    'filter' => array('IBLOCK_ID' =>$iblockId)
-));
-while ($arIblockProps = $dbIblockProps->fetch()){ 
-    Helper::pr($arIblockProps);
-}
-/**/
-
-// Получить список элементов инфоблока
-/**/
-$dbItems = \Bitrix\Iblock\ElementTable::getList(array(
-    'select' => array('ID', 'NAME', 'IBLOCK_ID'),
-    'filter' => array('IBLOCK_ID' => $iblockId)
-));
-$items = [];
-while ($arItem = $dbItems->fetch()){  
-    $dbProperty = \CIBlockElement::getProperty(
-        $arItem['IBLOCK_ID'],
-        $arItem['ID']
-    );
-    while($arProperty = $dbProperty->Fetch()){  
-        $arItem['PROPERTIES'][] = $arProperty;
-    }
-
-    $items [] = $arItem;
-}
-Helper::pr($items);
-/**/

@@ -7,7 +7,7 @@ use Bitrix\Main\Diag\ExceptionHandlerLog;
 /**
  * @see \Bitrix\Main\Application::createExceptionHandlerLog
  */
-class OfcoderDBExeptionHandlerLog extends ExceptionHandlerLog
+class OfcoderDBExceptionHandlerLog extends ExceptionHandlerLog
 {
   private string $table_name  = 'error_log_';
   private $level;

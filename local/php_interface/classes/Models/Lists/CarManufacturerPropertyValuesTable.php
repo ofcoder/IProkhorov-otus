@@ -6,5 +6,5 @@ use Models\AbstractIblockPropertyValuesTable;
 
 class CarManufacturerPropertyValuesTable extends AbstractIblockPropertyValuesTable
 {
-    const IBLOCK_ID = 17;
+    const IBLOCK_ID = 18;
 }
