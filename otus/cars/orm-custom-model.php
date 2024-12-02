@@ -40,7 +40,7 @@ $cars = CarsTable::getList([
         )
     );
 // посмотрим, какой запрос был сформирован
-echo '<pre>' . $cars->getQuery() . '</pre>';
+//echo '<pre>' . $cars->getQuery() . '</pre>';
     $cars = $query->fetchAll();
 //Helper::log2file($cars, '$cars-2', LOG_FILE_PATH);
 Helper::pr($cars);
