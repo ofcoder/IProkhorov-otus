@@ -6,5 +6,5 @@ use Models\AbstractIblockPropertyValuesTable;
 
 class ProceduresPropertyValuesTable extends AbstractIblockPropertyValuesTable
 {
-    const IBLOCK_ID = 19;
+    const IBLOCK_ID = 20;
 }
