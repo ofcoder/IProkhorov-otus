@@ -1,0 +1,418 @@
+<style>
+.map_section {
+	display: -webkit-flex;
+	display:flex;
+	}
+	
+.shop_container {
+	width: 100%;
+    height: 500px;
+    padding: 0 10px;
+	}
+	
+@media screen and (max-width: 600px){
+	.map_section {
+		-webkit-flex-direction: column-reverse;
+		flex-direction: column-reverse;
+		}
+    .shop_container {height: 300px;}
+    }
+@media screen and (min-width: 601px){
+	.shop_container {flex: 1;}
+	#map {flex: 2;}
+
+}
+
+.search-container {
+	width: 100%;
+	margin-bottom: 10px;
+	}
+	
+.search-container input {
+	border: 1px solid #bfbfbf;
+	border-radius: 3px;
+	padding: 8px;
+	width: 100%;
+	}
+
+#shop_list {
+    overflow-y: auto;
+	height: 100%;
+	}
+
+[data-objectId]:hover{color:black;cursor:pointer;}
+
+#shop_list, #shop_list ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	}
+	
+#shop_list li {margin: 0;}
+
+#shop_list li > .map_item {
+	padding: 10px 15px;
+	border-bottom: 1px solid #E3EAF8;
+	background: #fff;
+	transition: 0.4s;
+}
+#shop_list li > .map_item:hover {background: #f5f5f5;}
+
+#shop_list .map_item.active{
+	padding: 15px !important;
+	background: #f9f9f9;
+	}
+
+.map_item:not(.active) .work,
+.map_item:not(.active) .phone { display: none; }
+
+.city > .map_item .title {font-weight: bold;}
+.map_item .work {
+	font-size: 0.85rem;
+	margin: 10px 0;
+	opacity: 0.6;
+}
+.map_item .phone {font-size: 0.95rem;}
+
+#shop_list .map_item.active .title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+input.ymaps-2-1-79-searchbox-input__input {	min-height: auto; }
+</style>
+
+<div class="map_section">
+
+	<!-- 1. Создаем Яндекс карту -->
+	<div class="map" id="map" style="height:530px;width:100%;"></div>
+	<!-- 2. Создаем список адресов с поиском -->
+	<div class="shop_container">
+		<div class="search-container">
+			<input type="text" id="searchInput" placeholder="Поиск..." />
+		</div>
+		<ul id="shop_list"></ul>
+	</div>
+
+</div>
+
+
+<script src='https://api-maps.yandex.ru/2.1/?lang=ru_RU'></script>
+<script>
+	
+	document.addEventListener('DOMContentLoaded', function() {
+	
+	/* МАССИВ ГОРОДОВ МАГАЗИНОВ */
+	var ListCities = [
+		{
+			"title": "Бангкок",
+			"coordinates": "[13.785751, 100.513766]",
+			"shops": [
+				{
+					"title": "аэропорт Дон Мыанг",
+					"coordinates": "[13.919570, 100.602329]",
+					"work": "Круглосуточно",
+					"phone": "+0 (000) 000-00-00"
+				},{
+					"title": "Аэропорт Суварнабхуми",
+					"coordinates": "[13.692318, 100.750702]",
+					"work": "Круглосуточно",
+					"phone": "+0 (000) 000-00-00"
+				},{
+					"title": "Сатхон",
+					"coordinates": "[13.721492, 100.530535]",
+					"work": "Станция скоростного городского транспорта",
+					"phone": "+0 (000) 000-00-00"
+				},{
+					"title": "Chatuchak Park",
+					"coordinates": "[13.807970, 100.555556]",
+					"work": "Парк культуры и отдыхаскверлесопарк",
+					"phone": ""
+				}
+			]
+		},{
+			"title": "Паттайя",
+			"coordinates": "[12.929587, 100.870655]",
+			"shops": [
+				{
+					"title": "Картодром EasyKart",
+					"coordinates": "[12.922933, 100.868478]",
+					"work": "",
+					"phone": "+0 (000) 000-00-00"
+				},{
+					"title": "Royal Garden Plaza",
+					"coordinates": "[12.929239, 100.878205]",
+					"work": "Торговый центр",
+					"phone": "+7 (905) 898-11-35"
+				},{
+					"title": "Hard Rock Hotel Pattaya",
+					"coordinates": "[12.939307, 100.885063]",
+					"work": "Гостиница",
+					"phone": "+66 38 428 75 59"
+				}
+			]
+		},{
+			"title": "Si Racha",
+			"coordinates": "[13.168382, 100.925560]",
+			"shops": [
+				{
+					"title": "Si Racha Municipality Stadium",
+					"coordinates": "[13.172269, 100.927960]",
+					"work": "Стадион",
+					"phone": ""
+				}
+			]
+		},{
+			"title": "Хуахин",
+			"coordinates": "[12.581594, 99.949365]",
+			"shops": [
+				{
+					"title": "Хуахин аэропорт",
+					"coordinates": "[12.627503, 99.951506]",
+					"work": "",
+					"phone": "+0 (000) 000-00-00"
+				}
+			]
+		},{
+			"title": "Вьентьян",
+			"coordinates": "[17.970490, 102.618484]",
+			"shops": [
+				{
+					"title": "Национальный стадион имени Чао Анувонга",
+					"coordinates": "[17.968544, 102.608074]",
+					"work": "Круглосуточно",
+					"phone": "+0 (000) 000-00-00"
+				},{
+					"title": "Центральный автовокзал",
+					"coordinates": "[17.963837, 102.615032]",
+					"work": "Торговый центр",
+					"phone": "+7 (905) 898-11-35"
+				},{
+					"title": "Храм Ват Инпенг",
+					"coordinates": "[17.966294, 102.602698]",
+					"work": "Круглосуточно",
+					"phone": "+0 (000) 000-00-00"
+				}
+			]
+		}
+	
+	];
+	
+	/* СОЗДАТЬ СПИСОК ГОРОДОВ С МАГАЗИНАМИ */
+	// Получаем элемент списка, в который будем добавлять данные
+	var shopMainList = document.getElementById("shop_list");
+
+	// Функция создания элементов списка
+	function createListElements(data, parentElement) {
+	
+	var countIdx = 1;
+	   data.forEach(function(item, index) {
+		// Создать элемент списка городов
+		var cityListItem = document.createElement("li");
+		cityListItem.setAttribute("class", "city");
+
+		// Создать div города с атрибутами данных
+		var cityDiv = document.createElement("div");
+	/*	cityDiv.setAttribute("data-objectid", index);*/
+		cityDiv.setAttribute("data-objectid", countIdx);
+		countIdx++;
+		cityDiv.setAttribute("data-coordinates", item.coordinates);
+		cityDiv.setAttribute("class", "map_item city");
+
+		// Создать title города
+		var cityTitle = document.createElement("div");
+		cityTitle.setAttribute("class", "title");
+		cityTitle.textContent = item.title;
+
+		// Добавить название в div города
+		cityDiv.appendChild(cityTitle);
+
+		// Создать список магазинов
+		var shopList = document.createElement("ul");
+		item.shops.forEach(function(shop, shopIndex) {
+
+			// Создать элемент списка магазинов
+			var shopListItem = document.createElement("li");
+			shopListItem.setAttribute("class", "shop");
+
+			// Создать div магазина с атрибутами данных
+			var shopDiv = document.createElement("div");
+			/*shopDiv.setAttribute("data-objectid", index + "-" + (shopIndex + 1));*/
+			shopDiv.setAttribute("data-objectid", countIdx);
+			countIdx++;
+			shopDiv.setAttribute("data-coordinates", shop.coordinates);
+			shopDiv.setAttribute("class", "map_item");
+
+			// Создать название
+			var shopTitle = document.createElement("div");
+			shopTitle.setAttribute("class", "title");
+			shopTitle.textContent = shop.title;
+
+			// Создать график
+			var shopWork = document.createElement("div");
+			shopWork.setAttribute("class", "work");
+			shopWork.textContent = shop.work;
+		
+			// Создать телефон
+			var shopPhone = document.createElement("div");
+			shopPhone.setAttribute("class", "phone");
+			shopPhone.textContent = shop.phone;
+
+			// Добавить название магазина, график и телефон в элемент div списка магазинов
+			shopDiv.appendChild(shopTitle);
+			shopDiv.appendChild(shopWork);
+			shopDiv.appendChild(shopPhone);
+			
+			// Добавить магазин в элемент списка
+			shopListItem.appendChild(shopDiv);
+			// Добавить элемент списка магазинов в список магазинов
+			shopList.appendChild(shopListItem);
+		});
+
+		// Добавить раздел города и список магазинов к элементу списка городов
+		cityListItem.appendChild(cityDiv);
+		cityListItem.appendChild(shopList);
+
+		// Добавить элемент списка городов к родительскому элементу
+		parentElement.appendChild(cityListItem);
+	  });
+	}
+
+	// Вызов функции создания списка
+	createListElements(ListCities, shopMainList);
+
+
+	/* ПОЛУЧИТЬ МАССИВ ИЗ HTML СПИСКА */
+	var shopListArray = [];
+
+	[...document.querySelectorAll("#shop_list div.map_item")].forEach(function(cityItem) {
+
+		var cityCoordinatesAttr = cityItem.getAttribute("data-coordinates");
+		var cityCoordinates = JSON.parse(cityCoordinatesAttr);
+
+		var shopTitle = cityItem.querySelector(".title") ? cityItem.querySelector(".title").innerHTML : '';
+		var shopWork = cityItem.querySelector(".work") ? "<br><br>" + cityItem.querySelector(".work").innerHTML : '';
+		var shopPhone = cityItem.querySelector(".phone") ? "<br>" + cityItem.querySelector(".phone").innerHTML : '';
+
+		var city = {
+			type: "Feature",
+			id: +cityItem.getAttribute("data-objectid"),
+			geometry: {
+				type: "Point",
+				coordinates: cityCoordinates
+			},
+			properties: {
+				balloonContent: "<b>" + shopTitle + "</b>" + shopWork + shopPhone
+			}
+		};
+	  shopListArray.push(city);
+
+	});
+
+
+		/* СОЗДАНИЕ КАРТЫ С МЕТКАМИ */
+        ymaps.ready(init);
+        function init () {
+            var myMap = new ymaps.Map('map', {
+                center: [13.785751, 100.513766],	// Координаты по умолчанию
+                zoom: 11
+            }),
+            objectManager = new ymaps.ObjectManager({
+            clusterize: true,
+            gridSize: 32
+        });   
+            myMap.geoObjects.add(objectManager);
+            objectManager.objects.options.set('preset', 'islands#dotIcon');
+			objectManager.objects.options.set('iconColor', '#ff49d8');
+			myMap.geoObjects.add(objectManager);
+            objectManager.add({
+                "type": "FeatureCollection",
+                "features": shopListArray // Массив из html-списка
+            });
+	/* 2. Обработка списка и меток */
+			//Клик по метке в карте
+			objectManager.objects.events.add('click', function (e) {
+				var objectId=e.get('objectId');
+				viewObject(objectId);
+			});
+            //Клик в списке
+			[].forEach.call(document.querySelectorAll('[data-objectId]'), function(el) {
+				el.addEventListener('click', function() {
+					var objectId=el.getAttribute("data-objectId");
+					viewObject(objectId, el);
+				});
+
+			});
+			// Что происходит при выборе метки или варианта из списка
+			function viewObject(objectId, el){
+                // Удаляем со всего списка класс active затем добавляем к выбранному
+			    for (var object of document.querySelectorAll('[data-objectId]')) {
+					object.classList.remove('active');
+				}
+				document.querySelector('[data-objectId="'+objectId+'"]').classList.add('active');
+                // Выделяем все метки в #61C100
+                objectManager.objects.each(function (item) {
+                    objectManager.objects.setObjectOptions(item.id, {
+                        preset: 'islands#dotIcon',
+						iconColor: '#61C100'
+                    });
+                });
+				// затем выбранную в красную
+                objectManager.objects.setObjectOptions(objectId, {
+                    
+					iconColor: 'red'
+                });
+
+                // Центрирование по метке
+				var scale = '15';
+				if (el){	// Клик из списка
+					scale = el.classList.contains('city') ? 11 : 15;
+					}
+
+                myMap.setCenter(objectManager.objects.getById(objectId).geometry.coordinates, scale, {
+                    checkZoomRange: true
+                });
+
+
+			}
+			
+		}
+	});
+	
+	/* ПОИСК ПО СПИСКУ */
+	// Считываем элементы input и list
+	const searchInput = document.querySelector("#searchInput");
+	const list = document.querySelector("#shop_list");
+
+	// Добавляем прослушиватель событий при вводе в input
+	searchInput.addEventListener("input", function () {
+	  // Получаем поисковый запрос
+	  const searchTerm = this.value.toLowerCase();
+
+	  // Перебираем элементы списка
+	  for (let i = 0; i < list.children.length; i++) {
+		const item = list.children[i];
+
+		// Если поисковый запрос найден в тексте элемента, показываем его
+		if (item.textContent.toLowerCase().indexOf(searchTerm) !== -1) {
+		  item.style.display = "block";
+		} else {
+		  item.style.display = "none";
+		}
+		
+		// Если  элемент содержит вложенный список, то проверяем и в нем
+		var item_ul = item.querySelector('ul')
+		if ( item.querySelector('ul') ){
+			for ( let j = 0; j < item_ul.children.length; j++){
+				// Если поисковый запрос найден в тексте элемента, показываем его
+				if (item_ul.children[j].textContent.toLowerCase().indexOf(searchTerm) !== -1) {
+				  item_ul.children[j].style.display = "block";
+				} else {
+				  item_ul.children[j].style.display = "none";
+				}
+			}
+		
+		}
+	  }
+	});
+</script>

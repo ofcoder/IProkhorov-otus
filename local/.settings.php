@@ -76,6 +76,21 @@ return array (
     ),
   ),
   'composer' => array (
-    'value' => ['config_path' => $_SERVER['DOCUMENT_ROOT'] . '/local/php_interface/composer.json']
+    'value' => array('config_path' => $_SERVER['DOCUMENT_ROOT'] . '/local/php_interface/composer.json')
     ),
+  'session' => array(
+    'value' =>
+      array(
+        'lifetime' => 36000,
+        'mode' => 'separated',
+        'handlers' =>
+          array(
+            'kernel' => 'encrypted_cookies',
+            'general' =>
+              array(
+                'type' => 'file',
+              ),
+          ),
+      )
+  ),
 );

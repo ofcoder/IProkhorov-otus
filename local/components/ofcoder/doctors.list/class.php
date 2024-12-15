@@ -7,14 +7,29 @@ use Bitrix\Main\Engine\Contract\Controllerable,
     Bitrix\Main\Entity\ExpressionField,
     Bitrix\Main\Entity\ReferenceField,
     Bitrix\Main\Loader,
+    Bitrix\Main\Application,
     Bitrix\Iblock\Elements\ElementDoctorsTable  as DoctorsTable,
-    Bitrix\Iblock\Elements\ElementProceduresTable  as ProceduresTable;
+    Bitrix\Iblock\Elements\ElementProceduresTable  as ProceduresTable,
+    Ofcoder\Diag\Helper
+    ;
 /*
 use Models\Lists\DoctorsPropertyValuesTable as Doctors,
     Models\Lists\ProceduresPropertyValuesTable as Procedures;
 */
 class Doctors extends \CBitrixComponent implements Controllerable
 {
+  private const LOG_PATH = '/home/c/ct93339/public_html/local/logs/';
+
+  private $defaultSelect = [
+      'ID',
+      'NAME',
+      'UF_SURNAME',
+      'UF_NAME',
+      'UF_PATRONYMIC',
+      'UF_PROCEDURE_ID.ELEMENT.NAME'
+    ];
+  private $defaultFilter = ['ACTIVE' => 'Y'];
+  private $defaultOrder = ['ID' => 'ASC'];
 	public function configureActions()
     {
         return [
@@ -29,74 +44,97 @@ class Doctors extends \CBitrixComponent implements Controllerable
     public function onPrepareComponentParams($arParams)
     {
         $result = [
-            'CACHE_TIME' => isset($arParams['CACHE_TIME']) ? $arParams['CACHE_TIME'] : 36000000,
+            'CACHE_TIME' => isset($arParams['CACHE_TIME']) ? $arParams['CACHE_TIME'] : 3600,
             'CACHE_TYPE' => isset($arParams['CACHE_TYPE']) ? $arParams['CACHE_TYPE'] : 'A',
         ];
         return $result;
     }
 	
-	public function getDoctorsAction()
+	public function getDoctorsAction( $select = [], $filter = [], $order = [] )
   {
-    $select = ['ID', 'UF_SURNAME', 'UF_NAME', 'UF_PATRONYMIC', 'UF_PROCEDURE_ID'];
-    $filter = ['=ID' => '1' ];
-    $order = ['ID' => 'ASC'];
-    return $this->getDoctors($filter, $select, $order);
+    if(count($select) == 0)
+      $select = $this->defaultSelect;
+    if(count($filter) == 0)
+      $filter = $this->defaultFilter;
+    if(count($order) == 0)
+      $order = $this->defaultOrder;
+    return $this->getDoctors( $select, $filter, $order);
   }
-	private function getDoctors($select=[], $filter=['ACTIVE' => 'Y'], $order=['ID' => 'Y'])
+	private function getProcedures(){
+    $query = new Query(Bitrix\Iblock\Elements\ElementProceduresTable::getEntity());
+
+    $query->setFilter([
+      'ACTIVE' => 'Y',
+    ]);
+    $query->setSelect(['*']);
+    $result = $query->exec();
+    $resultAr =  $result->fetchAll();
+
+    $procedures = [];
+    foreach($resultAr as $row) {
+      $procedures[$row['ID']] =  $row['NAME'];
+    }
+
+    Helper::log2file($query->getQuery(), 'getQuery_getProcedures', self::LOG_PATH);
+    Helper::log2file($procedures, 'getQuery_getProcedures', self::LOG_PATH);
+    return $procedures;
+  }
+	private function getDoctors($select=[], $filter=[], $order=[])
   {
-    if(count($select) == 0){
-      $select = [
-        'ID',
-        'NAME',
-        'UF_SURNAME',
-        'UF_NAME',
-        'UF_PATRONYMIC',
-        'UF_PROCEDURE_ID.ELEMENT'
-      ];
-    }
-    $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::query()
-      ->setSelect($select)
-      ->setFilter($filter)
-      ->setOrder($order)
-      ->fetchCollection();
+    $query = new Query(Bitrix\Iblock\Elements\ElementDoctorsTable::getEntity());
 
-    foreach ($doctors as $doctor){
-      $doctorName = $doctor->get('UF_SURNAME') . ' ' . $doctor->get('UF_NAME') . ' ' . $doctor->get('UF_PATRONYMIC');
-      $doctorProcedures = [];
-      foreach($doctor->getUfProcedureId()->getAll() as $prItem) {
-        //var_dump($prItem->getId().' - '.$prItem->getElement()->getName());
-        $doctorProcedures[] = [
-          'name'=> $prItem->getElement()->getName(),
-          'id' => $prItem->getElement()->getId()
-        ];
-      }
-       $doctors[$doctorName]['PROCEDURES'] = $doctorProcedures;
+    $query->setFilter([
+      'ACTIVE' => 'Y',
+    ]);
+    $query->setSelect([
+      'ID',
+      'CODE',
+      'PROCEDURE' => 'UF_PROCEDURE_ID.ELEMENT.NAME',
+      new ExpressionField('FULL_NAME', 'CONCAT(%s," ",%s," ",%s)', ['UF_SURNAME.VALUE', 'UF_NAME.VALUE', 'UF_PATRONYMIC.VALUE']),
+      //new ExpressionField('DOCTOR_PROCEDURES', 'GROUP_CONCAT(%s)', 'FULL_NAME'),
+    ]);
+
+    $result = $query->exec();
+    $resultAr =  $result->fetchAll();
+
+    $doctors = [];
+    foreach($resultAr as $row) {
+      $doctors[$row['FULL_NAME']][] =  $row['PROCEDURE'];
     }
 
+    Helper::log2file($query->getQuery(), 'getQuery_getDoctors', self::LOG_PATH);
+    Helper::log2file($doctors, 'doctors_getDoctors', self::LOG_PATH);
+    Helper::log2file($resultAr, '$resultAr_getDoctors', self::LOG_PATH);
     return $doctors;
 
     /*
-    $select[] = 'PROCEDURE.ELEMENT.NAME';
-    $query = new Query(
-      DoctorsTable::getEntity()
-    );
-    $query->setSelect($select)
-      ->setFilter($filter)
-      ->setOrder($order);
-    $query->registerRuntimeField(
-      'PROCEDURE',
-      array(
-        'Models\Lists\ProceduresPropertyValuesTable',
-        'reference' => array('=this.UF_PROCEDURE_ID' => 'ref.ID'),
-        'join_type' => 'INNER'
-      )
-    );
-
-    echo '<pre>' . $query->getQuery() . '</pre>';
-
-// выполняем запрос
-    $result = $query->exec();
-    var_dump($result->fetchAll());
+      $query->registerRuntimeField(new ReferenceField( //Подзапрос в другую таблицу
+          "PROCEDURS",
+          "Bitrix\Iblock\Elements\ElementProceduresTable",
+          ["=this.UF_PROCEDURE_ID" => "ref.ID"]
+      ));
+      */
+    //log2file($query->getQuery(), 'getQuery_getDoctors', self::LOG_PATH);
+    // Debug::dumpToFile($shop['UF_STATUS'], 'UF_STATUS', '/local/logs/class-'.date("Y-m-d").'.txt')
+    /*
+      $doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::query()
+        ->setSelect($select)
+        ->setFilter($filter)
+        ->setOrder($order)
+        ->fetchCollection();
+      $doctorsAr = [];
+      foreach ($doctors as $doctor){
+        $doctorName = $doctor->getUfSurname()->getValue() . ' ' . $doctor->getUfName()->getValue() . ' ' . $doctor->getUfPatronymic()->getValue();
+        $doctorProcedures = [];
+        foreach($doctor->getUfProcedureId()->getAll() as $prItem) {
+          //var_dump($prItem->getId().' - '.$prItem->getElement()->getName());
+          $doctorProcedures[] = [
+            'name'=> $prItem->getElement()->getName(),
+            'id' => $prItem->getElement()->getId()
+          ];
+        }
+         $doctorsAr[$doctorName]['PROCEDURES'] = $doctorProcedures;
+      }
     */
   }
   public function updateDoctorsAction($id, $name = '')
@@ -108,21 +146,21 @@ class Doctors extends \CBitrixComponent implements Controllerable
   {
     return DoctorsTable::update($id, $fields)->isSuccess();
   }
-  public function addDoctorsAction()
+  public function addDoctorsAction($fields = [])
   {
-    return true;
+    return $this->addtDoctors($fields);
   }
-	private function addtDoctors()
+	private function addtDoctors($fields)
   {
-    return true;
+    return DoctorsTable::add($fields)->isSuccess();
   }
-  public function deleteDoctorsAction()
+  public function deleteDoctorsAction($id = 0)
   {
-    return true;
+    return $this->deleteDoctors($id);
   }
-	private function deleteDoctors()
+	private function deleteDoctors($id)
   {
-
+    return DoctorsTable::delete($id)->isSuccess();
   }
 	public function executeComponent()
     {
@@ -135,6 +173,7 @@ class Doctors extends \CBitrixComponent implements Controllerable
         } else {
    
             $this->arResult['ITEMS'] = $this->getDoctors();
+            $this->arResult['PROCEDURES'] = $this->getProcedures();
 
             $cache->endDataCache($this->arResult);
 
@@ -143,3 +182,68 @@ class Doctors extends \CBitrixComponent implements Controllerable
         }
     }
 }
+
+
+/**************************/
+/*
+use Bitrix\Main\Entity\Query;
+use Bitrix\Main\Entity\ExpressionField;
+use Bitrix\Main\Entity\ReferenceField;
+
+$res = \Bitrix\Iblock\Elements\ElementDoctorsTable::getList([
+   'runtime' => [
+                new ExpressionField('DOCTOR', 'CONCAT(%s," ",%s," ",%s)', ['UF_SURNAME.VALUE', 'UF_NAME.VALUE', 'UF_PATRONYMIC.VALUE']),
+
+            ],
+    'select' => [
+				'NAME',
+				'DOCTOR',
+				'PROCEDURE' => 'UF_PROCEDURE_ID.ELEMENT.NAME',
+				],
+
+    'filter' => ['=ACTIVE' => 'Y'],
+])->fetchAll();
+
+
+
+$doctorsProcedure = [];
+foreach($res as $doc){
+	$doctorsProcedure[$doc['DOCTOR']][] = $doc['PROCEDURE'];
+}
+print_r($doctorsProcedure);
+
+ * */
+
+/*
+ *
+use Bitrix\Main\Entity\ExpressionField;
+
+$doctors = \Bitrix\Iblock\Elements\ElementDoctorsTable::query()
+->setSelect([
+    'ID',
+    'NAME',
+    'UF_PROCEDURE_ID.ELEMENT.NAME',
+    new ExpressionField("FULL_NAME", 'CONCAT(%s," ",%s," ",%s)', ['UF_SURNAME.VALUE', 'UF_NAME.VALUE', 'UF_PATRONYMIC.VALUE'])
+])
+->setFilter(array('=ACTIVE' => 'Y'))
+//;var_dump($doctors->getQuery());
+
+->fetchCollection();
+
+// затем обходим коллекцию и получаем процедуры
+$procedures = [];
+foreach ($doctors as $doctor){
+    var_dump($doctor->get('NAME'));
+var_dump($doctor->get("FULL_NAME"));
+
+
+    foreach($doctor->getUfProcedureId()->getAll() as $prItem) {
+        var_dump($prItem->getId().' - '.$prItem->getElement()->getName());
+        $procedures[$doctor->get('NAME')] = [
+            'name'=> $prItem->getElement()->getName(),
+            'id' => $prItem->getElement()->getId()
+        ];
+    }
+
+}
+ * */

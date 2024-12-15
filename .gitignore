@@ -41,3 +41,4 @@ delete_site.php
 .htsecure
 /.git_core/*
 local_kb/
+node_modules/

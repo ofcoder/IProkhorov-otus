@@ -1,0 +1,75 @@
+@-webkit-keyframes show-notification {
+  from {
+    left: 200px;
+    opacity: 0; }
+  to {
+    opacity: 1;
+    left: 0; } }
+
+@keyframes show-notification {
+  from {
+    left: 200px;
+    opacity: 0; }
+  to {
+    opacity: 1;
+    left: 0; } }
+
+#notifications-list {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  padding: 25px; }
+  #notifications-list:not(:has(.notification)) {
+    display: none; }
+  #notifications-list button {
+    cursor: pointer;
+    -webkit-transition: .3s;
+    -o-transition: .3s;
+    transition: .3s; }
+    #notifications-list button:hover {
+      background-color: #4a4a7c !important;
+      color: white; }
+  #notifications-list__close-all {
+    width: 100%;
+    background-color: #f3f3f3;
+    -webkit-box-shadow: 0px 0px 25px 0px #00000035;
+            box-shadow: 0px 0px 25px 0px #00000035;
+    border-radius: 8px;
+    text-align: center;
+    border: none;
+    font-weight: 600;
+    padding: 8px; }
+  #notifications-list .notification {
+    position: relative;
+    -webkit-animation: show-notification .5s linear;
+            animation: show-notification .5s linear;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background-color: #f3f3f3;
+    padding: 12px;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    border-radius: 8px;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+    width: 250px;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    -webkit-box-shadow: 0px 0px 25px 0px #00000035;
+            box-shadow: 0px 0px 25px 0px #00000035;
+    border-bottom-right-radius: 24px; }
+    #notifications-list .notification__close {
+      border-radius: 20px;
+      height: 30px;
+      aspect-ratio: 4/4;
+      background-color: transparent;
+      border: none;
+      margin-top: auto; }
+    #notifications-list .notification__message {
+      margin: 0;
+      word-break: break-all; }
